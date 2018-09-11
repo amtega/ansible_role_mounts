@@ -1,2 +1,33 @@
 ---
 # Role tasks
+
+- name: assert platform is supported
+  assert:
+    that:
+      - distribution in mounts_supported_distributions
+      - >-
+        ansible_facts.distribution_version
+        is version(mounts_supported_versions[distribution], ">=")
+  vars:
+    distribution: "{{ ansible_facts.distribution | lower }}"
+  tags:
+    - role::mounts
+    - role::mounts::check
+
+- name: setup mounts
+  mount:
+    backup: "{{ item.backup | default(omit) }}"
+    boot: "{{ item.boot | default(omit) }}"
+    dump: "{{ item.dump | default(omit) }}"
+    fstab: "{{ item.fstab | default(omit) }}"
+    fstype: "{{ item.fstype | default(omit) }}"
+    opts: "{{ item.opts | default(omit) }}"
+    passno: "{{ item.passno | default(omit) }}"
+    path: "{{ item.path | default(omit) }}"
+    src: "{{ item.src | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  loop: "{{ mounts }}"
+  loop_control:
+    label: "{{ item.path }}"
+  tags:
+    - role::mounts

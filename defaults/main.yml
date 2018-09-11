@@ -1,2 +1,14 @@
 ---
 # Role default lower priority variables
+
+# List of dicts with mounts to configure. The dicts have the same attributes
+# that the ones expected by the ansible mount module. For example:
+#
+# mounts:
+#   - path: /mnt/tmp
+#     src: /dev/sdb
+#     fstype: xfs
+#     opts: noatime
+#     state: present
+
+mounts: []
