@@ -16,16 +16,26 @@
 
 - name: setup mounts
   mount:
-    backup: "{{ item.backup | default(omit) }}"
-    boot: "{{ item.boot | default(omit) }}"
-    dump: "{{ item.dump | default(omit) }}"
-    fstab: "{{ item.fstab | default(omit) }}"
-    fstype: "{{ item.fstype | default(omit) }}"
-    opts: "{{ item.opts | default(omit) }}"
-    passno: "{{ item.passno | default(omit) }}"
-    path: "{{ item.path | default(omit) }}"
-    src: "{{ item.src | default(omit) }}"
-    state: "{{ item.state | default(omit) }}"
+    backup: >-
+      {{ item.backup | default(mounts_defaults.backup) | default(omit) }}
+    boot: >-
+      {{ item.boot | default(mounts_defaults.boot) | default(omit) }}
+    dump: >-
+      {{ item.dump | default(mounts_defaults.dump) | default(omit) }}
+    fstab: >-
+      {{ item.fstab | default(mounts_defaults.fstab) | default(omit) }}
+    fstype: >-
+      {{ item.fstype | default(mounts_defaults.fstype) | default(omit) }}
+    opts: >-
+      {{ item.opts | default(mounts_defaults.opts) | default(omit) }}
+    passno: >-
+      {{ item.passno | default(mounts_defaults.passno) | default(omit) }}
+    path: >-
+      {{ item.path | default(mounts_defaults.path) | default(omit) }}
+    src: >-
+      {{ item.src | default(mounts_defaults.src) | default(omit) }}
+    state: >-
+      {{ item.state | default(mounts_defaults.state) | default(omit) }}
   loop: "{{ mounts }}"
   loop_control:
     label: "{{ item.path }}"

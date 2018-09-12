@@ -24,15 +24,12 @@
     mounts:
       - path: /mnt/disk0
         src: /dev/disk0
-        fstype: ext4
-        opts: ro
-        state: present
-
       - path: /mnt/disk1
         src: /dev/disk1
-        fstype: ext4
-        opts: ro
-        state: present
+    mounts_defaults:
+      state: present
+      fstype: ext4
+      opts: ro
   tasks:
     - name: read /etc/fstab file
       shell: cat /etc/fstab
