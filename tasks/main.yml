@@ -14,6 +14,15 @@
     - role::mounts
     - role::mounts::check
 
+- name: create mount points
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  when: mounts_create_paths
+  loop: "{{ mounts }}"
+  loop_control:
+    label: "{{ item.path }}"
+
 - name: setup mounts
   mount:
     backup: >-

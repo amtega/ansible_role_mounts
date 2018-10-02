@@ -18,3 +18,7 @@ mounts: []
 # that the ones expected by the ansible mount module
 
 mounts_defaults: {}
+
+# Create or not mount points paths if they doesn't exist
+
+mounts_create_paths: yes
