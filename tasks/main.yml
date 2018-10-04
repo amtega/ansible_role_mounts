@@ -14,7 +14,7 @@
     - role::mounts
     - role::mounts::check
 
-- blok:
+- block:
     - name: create mount points
       file:
         path: "{{ item.path }}"
