@@ -19,7 +19,9 @@
       file:
         path: "{{ item.path }}"
         state: directory
-      when: mounts_create_paths
+      when:
+        - mounts_create_paths
+        - item.state != "absent"
       loop: "{{ mounts }}"
       loop_control:
         label: "{{ item.path }}"
