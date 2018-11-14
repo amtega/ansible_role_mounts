@@ -1,19 +1,6 @@
 ---
 # Role tasks
 
-- name: assert platform is supported
-  assert:
-    that:
-      - distribution in mounts_supported_distributions
-      - >-
-        ansible_facts.distribution_version
-        is version(mounts_supported_versions[distribution], ">=")
-  vars:
-    distribution: "{{ ansible_facts.distribution | lower }}"
-  tags:
-    - role::mounts
-    - role::mounts::check
-
 - block:
     - name: create mount points
       file:
@@ -21,7 +8,7 @@
         state: directory
       when:
         - mounts_create_paths
-        - item.state != "absent"
+        - item.state | default(mounts_defaults.state) != "absent"
       loop: "{{ mounts }}"
       loop_control:
         label: "{{ item.path }}"
