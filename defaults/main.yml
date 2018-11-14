@@ -17,7 +17,8 @@ mounts: []
 # the `mounts` variable. The members of the dict are the same attributes
 # that the ones expected by the ansible mount module
 
-mounts_defaults: {}
+mounts_defaults:
+  state: present
 
 # Create or not mount points paths if they doesn't exist
 
