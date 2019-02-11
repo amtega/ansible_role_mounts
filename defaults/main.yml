@@ -10,6 +10,14 @@
 #     fstype: xfs
 #     opts: noatime
 #     state: present
+#
+# Additionally, if you set to `yes` the variable `mounts_create_paths` detailed
+# below, you can specify the following attributes for the mount point, that have
+# the same meaning that in ansible `file` module:
+#
+# - owner
+# - group
+# - mode
 
 mounts: []
 
