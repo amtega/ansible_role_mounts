@@ -24,6 +24,8 @@
     mounts:
       - path: /mnt/disk0
         src: /dev/disk0
+        owner: root
+        group: root
       - path: /mnt/disk1
         src: /dev/disk1
     mounts_defaults:

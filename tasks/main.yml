@@ -4,39 +4,53 @@
 - block:
     - name: create mount points
       file:
-        path: "{{ item.path }}"
+        path: "{{ mounts_mount_item.path }}"
         state: directory
+        owner: >-
+          {{ mounts_mount_item.owner
+             | default(mounts_defaults.owner)
+             | default(omit) }}
+        group: >-
+          {{ mounts_mount_item.group
+             | default(mounts_defaults.group)
+             | default(omit) }}
+        mode: >-
+          {{ mounts_mount_item.mode
+             | default(mounts_defaults.mode)
+             | default(omit) }}
       when:
         - mounts_create_paths
-        - item.state | default(mounts_defaults.state) != "absent"
+        - mounts_mount_item.state | default(mounts_defaults.state) != "absent"
       loop: "{{ mounts }}"
       loop_control:
-        label: "{{ item.path }}"
+        loop_var: mounts_mount_item
+        label: "{{ mounts_mount_item.path }}"
 
     - name: setup mounts
       mount:
         backup: >-
-          {{ item.backup | default(mounts_defaults.backup) | default(omit) }}
+          {{ mounts_mount_item.backup | default(mounts_defaults.backup) | default(omit) }}
         boot: >-
-          {{ item.boot | default(mounts_defaults.boot) | default(omit) }}
+          {{ mounts_mount_item.boot | default(mounts_defaults.boot) | default(omit) }}
         dump: >-
-          {{ item.dump | default(mounts_defaults.dump) | default(omit) }}
+          {{ mounts_mount_item.dump | default(mounts_defaults.dump) | default(omit) }}
         fstab: >-
-          {{ item.fstab | default(mounts_defaults.fstab) | default(omit) }}
+          {{ mounts_mount_item.fstab | default(mounts_defaults.fstab) | default(omit) }}
         fstype: >-
-          {{ item.fstype | default(mounts_defaults.fstype) | default(omit) }}
+          {{ mounts_mount_item.fstype | default(mounts_defaults.fstype) | default(omit) }}
         opts: >-
-          {{ item.opts | default(mounts_defaults.opts) | default(omit) }}
+          {{ mounts_mount_item.opts | default(mounts_defaults.opts) | default(omit) }}
         passno: >-
-          {{ item.passno | default(mounts_defaults.passno) | default(omit) }}
+          {{ mounts_mount_item.passno | default(mounts_defaults.passno) | default(omit) }}
         path: >-
-          {{ item.path | default(mounts_defaults.path) | default(omit) }}
+          {{ mounts_mount_item.path | default(mounts_defaults.path) | default(omit) }}
         src: >-
-          {{ item.src | default(mounts_defaults.src) | default(omit) }}
+          {{ mounts_mount_item.src | default(mounts_defaults.src) | default(omit) }}
         state: >-
-          {{ item.state | default(mounts_defaults.state) | default(omit) }}
+          {{ mounts_mount_item.state | default(mounts_defaults.state) | default(omit) }}
       loop: "{{ mounts }}"
       loop_control:
-        label: "{{ item.path }}"
+        loop_var: mounts_mount_item
+        label: "{{ mounts_mount_item.path }}"
   tags:
     - role::mounts
