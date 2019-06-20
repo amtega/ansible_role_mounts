@@ -2,7 +2,7 @@
 # Role tasks
 
 - block:
-    - name: create mount points
+    - name: Create mount points
       file:
         path: "{{ mounts_mount_item.path }}"
         state: directory
@@ -19,14 +19,14 @@
              | default(mounts_defaults.mode)
              | default(omit) }}
       when:
-        - mounts_create_paths
+        - mounts_create_paths | bool
         - mounts_mount_item.state | default(mounts_defaults.state) != "absent"
       loop: "{{ mounts }}"
       loop_control:
         loop_var: mounts_mount_item
         label: "{{ mounts_mount_item.path }}"
 
-    - name: setup mounts
+    - name: Setup mounts
       mount:
         backup: >-
           {{ mounts_mount_item.backup | default(mounts_defaults.backup) | default(omit) }}
