@@ -15,15 +15,18 @@ galaxy_info:
         - 7
     - name: Fedora
       versions:
-        - 27
-        - 28
+        - 29
+        - 30
   galaxy_tags:
     - system
     - mount
 
 dependencies:
   - role: amtega.check_platform
-    check_platform_distributions:
-      centos: 6
-      fedora: 27
-      rhel: 6
+    vars:
+      check_platform_distributions:
+        centos: 6
+        fedora: 29
+        rhel: 6
+    tags:
+      - role::mounts

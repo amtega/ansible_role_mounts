@@ -1,22 +1,24 @@
 ---
 # Tasks for testing role
 
-- name: run idempotence test
+- name: Run idempotence test
   hosts: localhost
   roles:
     - role: amtega.docker_presets
-      docker_presets_images_json_query: >-
-        [? starts_with(name, `centos-6`)
-           || starts_with(name, `centos-7`)
-           || starts_with(name, `fedora-27`)
-           || starts_with(name, `fedora-28`) ]
+      vars:
+        docker_presets_images_json_query: >-
+          [? starts_with(name, `centos-6`)
+             || starts_with(name, `centos-7`)
+             || starts_with(name, `fedora-29`)
+             || starts_with(name, `fedora-30`) ]
 
     - role: amtega.docker_sandbox
-      docker_sandbox_state: started
+      vars:
+        docker_sandbox_state: started
   tags:
     - sandbox
 
-- name: test mounts role
+- name: Test mounts role
   hosts: docker_sandbox_containers
   roles:
     - amtega.mounts
@@ -33,12 +35,12 @@
       fstype: ext4
       opts: ro
   tasks:
-    - name: read /etc/fstab file
+    - name: Read /etc/fstab file
       shell: cat /etc/fstab
       changed_when: no
       register: read_fstab_result
 
-    - name: check that /etc/fstab contains required mounts
+    - name: Check that /etc/fstab contains required mounts
       assert:
         that:
           - read_fstab_result.stdout is search("/dev/disk0.*/mnt/disk0.*ext4")
@@ -46,11 +48,12 @@
   tags:
     - idempotence
 
-- name: cleanup docker docker sandbox
+- name: Cleanup docker docker sandbox
   hosts: localhost
   roles:
     - role: amtega.docker_sandbox
-      docker_sandbox_state: absent
+      vars:
+        docker_sandbox_state: absent
   tags:
     - cleanup
     - sandbox
