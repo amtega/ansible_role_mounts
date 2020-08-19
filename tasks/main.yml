@@ -2,55 +2,60 @@
 # Role tasks
 
 - block:
-    - name: Create mount points
-      file:
-        path: "{{ mounts_mount_item.path }}"
-        state: directory
-        owner: >-
-          {{ mounts_mount_item.owner
-             | default(mounts_defaults.owner)
-             | default(omit) }}
-        group: >-
-          {{ mounts_mount_item.group
-             | default(mounts_defaults.group)
-             | default(omit) }}
-        mode: >-
-          {{ mounts_mount_item.mode
-             | default(mounts_defaults.mode)
-             | default(omit) }}
-      when:
-        - mounts_create_paths | bool
-        - mounts_mount_item.state | default(mounts_defaults.state) != "absent"
-      loop: "{{ mounts }}"
-      loop_control:
-        loop_var: mounts_mount_item
-        label: "{{ mounts_mount_item.path }}"
+    - name: Gather facts
+      setup:
+      when: ansible_facts.mounts is not defined
 
-    - name: Setup mounts
-      mount:
-        backup: >-
-          {{ mounts_mount_item.backup | default(mounts_defaults.backup) | default(omit) }}
-        boot: >-
-          {{ mounts_mount_item.boot | default(mounts_defaults.boot) | default(omit) }}
-        dump: >-
-          {{ mounts_mount_item.dump | default(mounts_defaults.dump) | default(omit) }}
-        fstab: >-
-          {{ mounts_mount_item.fstab | default(mounts_defaults.fstab) | default(omit) }}
-        fstype: >-
-          {{ mounts_mount_item.fstype | default(mounts_defaults.fstype) | default(omit) }}
-        opts: >-
-          {{ mounts_mount_item.opts | default(mounts_defaults.opts) | default(omit) }}
-        passno: >-
-          {{ mounts_mount_item.passno | default(mounts_defaults.passno) | default(omit) }}
-        path: >-
-          {{ mounts_mount_item.path | default(mounts_defaults.path) | default(omit) }}
-        src: >-
-          {{ mounts_mount_item.src | default(mounts_defaults.src) | default(omit) }}
-        state: >-
-          {{ mounts_mount_item.state | default(mounts_defaults.state) | default(omit) }}
-      loop: "{{ mounts }}"
-      loop_control:
-        loop_var: mounts_mount_item
-        label: "{{ mounts_mount_item.path }}"
+    - block:
+        - name: Create mount points
+          file:
+            path: "{{ mounts_mount_item.path }}"
+            state: directory
+            owner: >-
+              {{ mounts_mount_item.owner
+                 | default(mounts_defaults.owner)
+                 | default(omit) }}
+            group: >-
+              {{ mounts_mount_item.group
+                 | default(mounts_defaults.group)
+                 | default(omit) }}
+            mode: >-
+              {{ mounts_mount_item.mode
+                 | default(mounts_defaults.mode)
+                 | default(omit) }}
+          when:
+            - mounts_create_paths | bool
+            - mounts_mount_item.state | default(mounts_defaults.state) != "absent"
+          loop: "{{ mounts }}"
+          loop_control:
+            loop_var: mounts_mount_item
+            label: "{{ mounts_mount_item.path }}"
+
+        - name: Setup mounts
+          mount:
+            backup: "{{ mounts_mount.backup | default(omit) }}"
+            boot: "{{ mounts_mount.boot | default(omit) }}"
+            dump: "{{ mounts_mount.dump | default(omit) }}"
+            fstab: "{{ mounts_mount.fstab | default(omit) }}"
+            fstype: "{{ mounts_mount.fstype }}"
+            opts: "{{ mounts_mount.opts }}"
+            passno: "{{ mounts_mount.passno | default(omit) }}"
+            path: "{{ mounts_mount.path }}"
+            src: "{{ mounts_mount.src }}"
+            state: "{{ mounts_mount.state | default('present') }}"
+          loop: "{{ mounts }}"
+          loop_control:
+            loop_var: mounts_mount_item
+            label: "{{ mounts_mount_item.path }}"
+      when:
+        - mounts_mount.path is defined
+        - mounts_mount.src is defined
+        - mounts_mount.fstype is defined
+      vars:
+        mounts_current: "{{ lookup('template', 'mount.yml.j2') | from_yaml }}"
+        mounts_mount: >-
+          {{ mounts_defaults
+             | combine(mounts_current)
+             | combine(mounts_mount_item) }}
   tags:
     - role::mounts

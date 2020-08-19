@@ -1,0 +1,20 @@
+{% set found = ansible_facts.mounts
+               | selectattr("mount",
+                            "equalto",
+                            mounts_mount_item.path
+                            | default(mounts_defaults.path))
+               | list %}
+{% if found | length > 0 %}
+{% set mount = found | first %}
+{% if mount.device is defined %}
+src: "{{ mount.device }}"
+{% endif %}
+{% if mount.fstype is defined %}
+fstype: "{{ mount.fstype }}"
+{% endif %}
+{% if mount.opts is defined %}
+opts: "{{ mount.options }}"
+{% endif %}
+{% else %}
+{}
+{% endif %}
