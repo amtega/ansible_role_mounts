@@ -43,7 +43,7 @@
             path: "{{ mounts_mount.path }}"
             src: "{{ mounts_mount.src }}"
             state: "{{ mounts_mount.state | default('present') }}"
-          loop: "{{ mounts }}"
+          loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
@@ -52,6 +52,10 @@
         - mounts_mount.src is defined
         - mounts_mount.fstype is defined
       vars:
+        mounts_to_manage: >-
+          {{ mounts
+             + ((mounts_load_from_hostvars | bool)
+                | ternary(mounts_hostvars | default([]) | flatten, [])) }}
         mounts_current: "{{ lookup('template', 'mount.yml.j2') | from_yaml }}"
         mounts_mount: >-
           {{ mounts_defaults

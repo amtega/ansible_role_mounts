@@ -67,16 +67,19 @@ provisioner:
     hosts:
       molecule_hosts:
         vars:
+          mounts_load_from_hostvars: yes
+          mounts_disk1:
+            path: /mnt/disk1
+            src: /dev/disk1
+            fstype: ext4
+          mounts_disk2:
+            path: /mnt/disk2
+            fstype: ext4
           mounts:
             - path: /mnt/disk0
               src: /dev/disk0
               owner: root
               group: root
-              fstype: ext4
-            - path: /mnt/disk1
-              src: /dev/disk1
-              fstype: ext4
-            - path: /mnt/disk2
               fstype: ext4
           mounts_defaults:
             state: present

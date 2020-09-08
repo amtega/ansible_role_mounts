@@ -29,3 +29,14 @@ dependencies:
         centos: 6
         fedora: 29
         redhat: 6
+
+  - role: amtega.select_hostvars
+    vars:
+      select_hostvars_query:
+        pattern: "^mounts_.*"
+        exclude_pattern: "^mounts_defaults$"
+        attributes:
+          - path
+        fact_name: mounts_hostvars
+        output_type: list
+    when: mounts_load_from_hostvars | bool
