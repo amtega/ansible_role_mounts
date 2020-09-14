@@ -38,7 +38,7 @@
             dump: "{{ mounts_mount.dump | default(omit) }}"
             fstab: "{{ mounts_mount.fstab | default(omit) }}"
             fstype: "{{ mounts_mount.fstype }}"
-            opts: "{{ mounts_mount.opts }}"
+            opts: "{{ mounts_mount.opts | default(omit) }}"
             passno: "{{ mounts_mount.passno | default(omit) }}"
             path: "{{ mounts_mount.path }}"
             src: "{{ mounts_mount.src }}"
