@@ -18,6 +18,10 @@
 # - owner
 # - group
 # - mode
+# - seuser
+# - serole
+# - setype
+# - selevel
 #
 # If the src, fstype and opts are not defined, the role will get it from current
 # facts for already mounted filesystems.

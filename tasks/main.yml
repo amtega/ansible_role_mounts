@@ -23,6 +23,22 @@
               {{ mounts_mount_item.mode
                  | default(mounts_defaults.mode)
                  | default(omit) }}
+            seuser: >-
+              {{ mounts_mount_item.seuser
+                 | default(mounts_defaults.seuser)
+                 | default(omit) }}
+            serole: >-
+              {{ mounts_mount_item.serole
+                 | default(mounts_defaults.serole)
+                 | default(omit) }}
+            setype: >-
+              {{ mounts_mount_item.setype
+                 | default(mounts_defaults.setype)
+                 | default(omit) }}
+            selevel: >-
+              {{ mounts_mount_item.selevel
+                 | default(mounts_defaults.selevel)
+                 | default(omit) }}
           when:
             - mounts_create_paths | bool
             - mounts_mount_item.state | default(mounts_defaults.state) != "absent"
