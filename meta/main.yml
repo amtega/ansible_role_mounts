@@ -3,6 +3,7 @@
 
 galaxy_info:
   role_name: mounts
+  namespace: amtega
   author: Juan Antonio Valiño García
   description: Manage mount points through the mount module
   company: AMTEGA - Xunta de Galicia
