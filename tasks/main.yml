@@ -41,7 +41,9 @@
                  | default(omit) }}
           when:
             - mounts_create_paths | bool
-            - mounts_mount_item.state | default(mounts_defaults.state) != "absent"
+            - >-
+              mounts_mount_item.state | default(mounts_defaults.state)
+              != "absent"
           loop: "{{ mounts }}"
           loop_control:
             loop_var: mounts_mount_item
