@@ -107,11 +107,12 @@
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
-            
+
       when:
         - mounts_mount.path is defined
         - mounts_mount.src is defined
         - mounts_mount.fstype is defined
+
       vars:
         mounts_to_manage: >-
           {{ mounts
