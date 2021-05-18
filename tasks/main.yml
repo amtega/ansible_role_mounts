@@ -65,6 +65,49 @@
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
+
+        - name: Restore mount points permissions
+          file:
+            path: "{{ mounts_mount_item.path }}"
+            state: directory
+            owner: >-
+              {{ mounts_mount_item.owner
+                 | default(mounts_defaults.owner)
+                 | default(omit) }}
+            group: >-
+              {{ mounts_mount_item.group
+                 | default(mounts_defaults.group)
+                 | default(omit) }}
+            mode: >-
+              {{ mounts_mount_item.mode
+                 | default(mounts_defaults.mode)
+                 | default(omit) }}
+            seuser: >-
+              {{ mounts_mount_item.seuser
+                 | default(mounts_defaults.seuser)
+                 | default(omit) }}
+            serole: >-
+              {{ mounts_mount_item.serole
+                 | default(mounts_defaults.serole)
+                 | default(omit) }}
+            setype: >-
+              {{ mounts_mount_item.setype
+                 | default(mounts_defaults.setype)
+                 | default(omit) }}
+            selevel: >-
+              {{ mounts_mount_item.selevel
+                 | default(mounts_defaults.selevel)
+                 | default(omit) }}
+          when:
+            - mounts_create_paths | bool
+            - >-
+              mounts_mount_item.state | default(mounts_defaults.state)
+              != "absent"
+          loop: "{{ mounts }}"
+          loop_control:
+            loop_var: mounts_mount_item
+            label: "{{ mounts_mount_item.path }}"
+            
       when:
         - mounts_mount.path is defined
         - mounts_mount.src is defined
