@@ -45,7 +45,7 @@
             - >-
               mounts_mount_item.state | default(mounts_defaults.state)
               != "absent"
-          loop: "{{ mounts }}"
+          loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
@@ -104,16 +104,14 @@
             - >-
               mounts_mount_item.state | default(mounts_defaults.state)
               != "absent"
-          loop: "{{ mounts }}"
+          loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
-
       when:
         - mounts_mount.path is defined
         - mounts_mount.src is defined
         - mounts_mount.fstype is defined
-
       vars:
         mounts_to_manage: >-
           {{ mounts
