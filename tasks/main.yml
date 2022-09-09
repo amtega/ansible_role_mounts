@@ -1,14 +1,15 @@
 ---
-# Role tasks
 
-- block:
+- name: Setup mounts
+  block:
     - name: Gather facts
-      setup:
+      ansible.builtin.setup:
       when: ansible_facts.mounts is not defined
 
-    - block:
+    - name: Perform mount point setup
+      block:
         - name: Create mount points
-          file:
+          ansible.builtin.file:
             path: "{{ mounts_mount_item.path }}"
             state: directory
             owner: >-
@@ -44,7 +45,7 @@
             - >-
               mounts_mount_item.state | default(mounts_defaults.state)
               != "absent"
-          loop: "{{ mounts }}"
+          loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
@@ -67,7 +68,7 @@
             label: "{{ mounts_mount_item.path }}"
 
         - name: Restore mount points permissions
-          file:
+          ansible.builtin.file:
             path: "{{ mounts_mount_item.path }}"
             state: directory
             owner: >-
@@ -103,16 +104,14 @@
             - >-
               mounts_mount_item.state | default(mounts_defaults.state)
               != "absent"
-          loop: "{{ mounts }}"
+          loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
-
       when:
         - mounts_mount.path is defined
         - mounts_mount.src is defined
         - mounts_mount.fstype is defined
-
       vars:
         mounts_to_manage: >-
           {{ mounts
