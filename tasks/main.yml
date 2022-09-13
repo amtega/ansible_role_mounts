@@ -51,7 +51,7 @@
             label: "{{ mounts_mount_item.path }}"
 
         - name: Setup mounts
-          mount:
+          ansible.posix.mount:
             backup: "{{ mounts_mount.backup | default(omit) }}"
             boot: "{{ mounts_mount.boot | default(omit) }}"
             dump: "{{ mounts_mount.dump | default(omit) }}"
@@ -62,10 +62,14 @@
             path: "{{ mounts_mount.path }}"
             src: "{{ mounts_mount.src }}"
             state: "{{ mounts_mount.state | default('present') }}"
+          register: mounts_mount_result
           loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
+          until: mounts_mount_result is success
+          retries: "{{ mounts_retries }}"
+          delay: "{{ mounts_delay }}"
 
         - name: Restore mount points permissions
           ansible.builtin.file:
