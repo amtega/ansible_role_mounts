@@ -41,6 +41,14 @@ mounts_defaults:
 
 mounts_create_paths: yes
 
+# Number of retries during mount/umount operations
+
+mounts_retries: 5
+
+# Delay between retries
+
+mounts_delay: 10
+
 # Indicate `mounts` must be loaded also from host variables. Any host variable
 # that begins with "mounts_*" and contains the necessary attributes
 # will be loaded as an item to manage by the role. The variables must follow the
