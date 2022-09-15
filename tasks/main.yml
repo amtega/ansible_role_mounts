@@ -44,7 +44,7 @@
             - mounts_create_paths | bool
             - >-
               mounts_mount_item.state | default(mounts_defaults.state)
-              != "absent"
+              in ("present", "mounted")
           loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
@@ -66,7 +66,9 @@
           loop: "{{ mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
-            label: "{{ mounts_mount_item.path }}"
+            label: >-
+              {{ mounts_mount_item.path }}
+              {{ mounts_mount_item.state | default(mounts_defaults.state) }}
           until: mounts_mount_result is success
           retries: "{{ mounts_retries }}"
           delay: "{{ mounts_delay }}"
