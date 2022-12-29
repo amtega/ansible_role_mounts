@@ -1,0 +1,45 @@
+{% set mounts_to_manage = mounts
+                          + ((mounts_load_from_hostvars | bool)
+                            | ternary(mounts_hostvars | default([]) | flatten
+                                      , [])) %}
+
+{% for mount in mounts_to_manage %}
+{% set found = ansible_facts.mounts
+               | selectattr("mount",
+                            "equalto",
+                            mount.path | default(mounts_defaults.path))
+               | list %}
+
+{% if found | length > 0 %}
+{% set mount_found = found | first %}
+{% else %}
+{% set mount_found = {} %}
+{% endif %}
+
+{% if mount_found.device is defined %}
+{% set src = {"src": mount_found.device} %}
+{% else %}
+{% set src = {} %}
+{% endif %}
+{% if mount_found.fstype is defined %}
+{% set fstype = {"fstype": mount_found.fstype} %}
+{% else %}
+{% set fstype = {} %}
+{% endif %}
+{% if mount_found.opts is defined %}
+{% set opts = {"opts": mount_found.options} %}
+{% else %}
+{% set opts = {} %}
+{% endif %}
+
+- {{ mounts_defaults
+     | combine(src)
+     | combine(fstype)
+     | combine(opts)
+     | combine(mount) }}
+
+{% endfor %}
+
+{% if mounts_to_manage | length == 0 %}
+[]
+{% endif %}
