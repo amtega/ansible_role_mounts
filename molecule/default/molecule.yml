@@ -73,5 +73,11 @@ provisioner:
       molecule_hosts_fedora:
         vars:
           ansible_python_interpreter: /usr/bin/python3
+      molecule_hosts_centos_6:
+        vars:
+          python_build_install_dir: /opt/python
+          ansible_python_interpreter: /opt/python/bin/python3
+          packages_python_virtualenv_python: /opt/python/bin/python3
+          packages_python_virtualenv_command: /opt/python/bin/virtualenv
 verifier:
   name: ansible

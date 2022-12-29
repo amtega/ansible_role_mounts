@@ -4,7 +4,14 @@
   block:
     - name: Gather facts
       ansible.builtin.setup:
+        gather_subset:
+          - mounts
       when: ansible_facts.mounts is not defined
+
+    - name: Setup internal facts
+      ansible.builtin.set_fact:
+        _mounts_to_manage: >-
+          {{ lookup('template', 'mounts.yml.j2') | from_yaml }}
 
     - name: Perform mount point setup
       block:
@@ -12,63 +19,40 @@
           ansible.builtin.file:
             path: "{{ mounts_mount_item.path }}"
             state: directory
-            owner: >-
-              {{ mounts_mount_item.owner
-                 | default(mounts_defaults.owner)
-                 | default(omit) }}
-            group: >-
-              {{ mounts_mount_item.group
-                 | default(mounts_defaults.group)
-                 | default(omit) }}
-            mode: >-
-              {{ mounts_mount_item.mode
-                 | default(mounts_defaults.mode)
-                 | default(omit) }}
-            seuser: >-
-              {{ mounts_mount_item.seuser
-                 | default(mounts_defaults.seuser)
-                 | default(omit) }}
-            serole: >-
-              {{ mounts_mount_item.serole
-                 | default(mounts_defaults.serole)
-                 | default(omit) }}
-            setype: >-
-              {{ mounts_mount_item.setype
-                 | default(mounts_defaults.setype)
-                 | default(omit) }}
-            selevel: >-
-              {{ mounts_mount_item.selevel
-                 | default(mounts_defaults.selevel)
-                 | default(omit) }}
+            owner: "{{ mounts_mount_item.owner | default(omit) }}"
+            group: "{{ mounts_mount_item.group | default(omit) }}"
+            mode: "{{ mounts_mount_item.mode | default(omit) }}"
+            seuser: "{{ mounts_mount_item.seuser | default(omit) }}"
+            serole: "{{ mounts_mount_item.serole | default(omit) }}"
+            setype: "{{ mounts_mount_item.setype | default(omit) }}"
+            selevel: "{{ mounts_mount_item.selevel | default(omit) }}"
           when:
             - mounts_create_paths | bool
-            - >-
-              mounts_mount_item.state | default(mounts_defaults.state)
-              in ("present", "mounted")
-          loop: "{{ mounts_to_manage }}"
+            - mounts_mount_item.state in ("present", "mounted")
+          loop: "{{ _mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
 
         - name: Setup mounts
           ansible.posix.mount:
-            backup: "{{ mounts_mount.backup | default(omit) }}"
-            boot: "{{ mounts_mount.boot | default(omit) }}"
-            dump: "{{ mounts_mount.dump | default(omit) }}"
-            fstab: "{{ mounts_mount.fstab | default(omit) }}"
-            fstype: "{{ mounts_mount.fstype }}"
-            opts: "{{ mounts_mount.opts | default(omit) }}"
-            passno: "{{ mounts_mount.passno | default(omit) }}"
-            path: "{{ mounts_mount.path }}"
-            src: "{{ mounts_mount.src }}"
-            state: "{{ mounts_mount.state | default('present') }}"
+            backup: "{{ mounts_mount_item.backup | default(omit) }}"
+            boot: "{{ mounts_mount_item.boot | default(omit) }}"
+            dump: "{{ mounts_mount_item.dump | default(omit) }}"
+            fstab: "{{ mounts_mount_item.fstab | default(omit) }}"
+            fstype: "{{ mounts_mount_item.fstype }}"
+            opts: "{{ mounts_mount_item.opts | default(omit) }}"
+            passno: "{{ mounts_mount_item.passno | default(omit) }}"
+            path: "{{ mounts_mount_item.path }}"
+            src: "{{ mounts_mount_item.src }}"
+            state: "{{ mounts_mount_item.state | default('present') }}"
           register: mounts_mount_result
-          loop: "{{ mounts_to_manage }}"
+          loop: "{{ _mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: >-
               {{ mounts_mount_item.path }}
-              {{ mounts_mount_item.state | default(mounts_defaults.state) }}
+              {{ mounts_mount_item.state }}
           until: mounts_mount_result is success
           retries: "{{ mounts_retries }}"
           delay: "{{ mounts_delay }}"
@@ -77,56 +61,23 @@
           ansible.builtin.file:
             path: "{{ mounts_mount_item.path }}"
             state: directory
-            owner: >-
-              {{ mounts_mount_item.owner
-                 | default(mounts_defaults.owner)
-                 | default(omit) }}
-            group: >-
-              {{ mounts_mount_item.group
-                 | default(mounts_defaults.group)
-                 | default(omit) }}
-            mode: >-
-              {{ mounts_mount_item.mode
-                 | default(mounts_defaults.mode)
-                 | default(omit) }}
-            seuser: >-
-              {{ mounts_mount_item.seuser
-                 | default(mounts_defaults.seuser)
-                 | default(omit) }}
-            serole: >-
-              {{ mounts_mount_item.serole
-                 | default(mounts_defaults.serole)
-                 | default(omit) }}
-            setype: >-
-              {{ mounts_mount_item.setype
-                 | default(mounts_defaults.setype)
-                 | default(omit) }}
-            selevel: >-
-              {{ mounts_mount_item.selevel
-                 | default(mounts_defaults.selevel)
-                 | default(omit) }}
+            owner: "{{ mounts_mount_item.owner | default(omit) }}"
+            group: "{{ mounts_mount_item.group | default(omit) }}"
+            mode: "{{ mounts_mount_item.mode | default(omit) }}"
+            seuser: "{{ mounts_mount_item.seuser | default(omit) }}"
+            serole: "{{ mounts_mount_item.serole | default(omit) }}"
+            setype: "{{ mounts_mount_item.setype | default(omit) }}"
+            selevel: "{{ mounts_mount_item.selevel | default(omit) }}"
           when:
             - mounts_create_paths | bool
-            - >-
-              mounts_mount_item.state | default(mounts_defaults.state)
-              != "absent"
-          loop: "{{ mounts_to_manage }}"
+            - mounts_mount_item.state != "absent"
+          loop: "{{ _mounts_to_manage }}"
           loop_control:
             loop_var: mounts_mount_item
             label: "{{ mounts_mount_item.path }}"
       when:
-        - mounts_mount.path is defined
-        - mounts_mount.src is defined
-        - mounts_mount.fstype is defined
-      vars:
-        mounts_to_manage: >-
-          {{ mounts
-             + ((mounts_load_from_hostvars | bool)
-                | ternary(mounts_hostvars | default([]) | flatten, [])) }}
-        mounts_current: "{{ lookup('template', 'mount.yml.j2') | from_yaml }}"
-        mounts_mount: >-
-          {{ mounts_defaults
-             | combine(mounts_current)
-             | combine(mounts_mount_item) }}
+        - mounts_mount_item.path is defined
+        - mounts_mount_item.src is defined
+        - mounts_mount_item.fstype is defined
   tags:
     - role::mounts
